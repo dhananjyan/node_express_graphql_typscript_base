@@ -85,7 +85,7 @@ enum Permissions {
 
 type Query {
   category: CategoryPaginatedListResponseType!
-  roles: RolePaginatedListResponseType!
+  roles(payload: paginatedFilterRoleInputType!): RolePaginatedListResponseType!
   users(payload: paginatedFilterUserInputType!): UserPaginatedListResponseType!
 }
 
@@ -148,6 +148,13 @@ input createUserInputType {
   mobileNumber: String!
   password: String!
   roles: [String!]!
+}
+
+input paginatedFilterRoleInputType {
+  limit: Int! = 10
+  name: String
+  page: Int! = 1
+  permissions: [Permissions!]
 }
 
 input paginatedFilterUserInputType {

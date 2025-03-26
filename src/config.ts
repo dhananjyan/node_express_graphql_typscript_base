@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const dbConfig = {
-    uri: process.env.MONGO_URI || "mongodb://localhost:27017/mydatabase",
+    uri: process.env.MONGO_URI || "mongodb://localhost:27017/airbnb",
 }
 export const GRAPHQL_PATH = process.env.GRAPHQL_PATH || "/graphql";
 export const jwtConfig = {

@@ -1,6 +1,7 @@
 import RoleService from "./Role.service";
 import { MutationResponseType } from "../../graphql/common.type";
-import { RoleInputType, RolePaginatedListResponseType, UpdateRoleInputType } from "./Role.type";
+import { paginatedFilterRoleInputType, RoleInputType, RolePaginatedListResponseType, UpdateRoleInputType } from "./Role.type";
+import { normalizeFilteredInput } from "../../helper";
 
 class RoleController {
 
@@ -9,12 +10,31 @@ class RoleController {
         this.roleService = new RoleService()
     }
 
-    async getAllRoles(): Promise<RolePaginatedListResponseType> {
-        const roles = await this.roleService.getAll();
-        return {
-            total: 5,
-            hasMore: true,
-            item: roles
+    async getAllRoles(payload: paginatedFilterRoleInputType): Promise<RolePaginatedListResponseType> {
+        try {
+            let { limit, page, ...filters } = payload;
+
+            const skip = (page - 1) * limit;
+
+            let normalizedFilters = normalizeFilteredInput(filters);
+
+            const role = await this.roleService.getPaginated({
+                filters: normalizedFilters,
+                limit,
+                skip
+            });
+
+            return {
+                item: role.data,
+                total: role.total,
+                hasMore: false,
+
+            }
+        } catch (error) {
+            console.error(error)
+            return {
+                item: []
+            }
         }
     }
 
@@ -47,8 +67,8 @@ class RoleController {
         try {
             const { id, ...updateData } = payload;
 
+            await this.roleService.update(id, updateData)
 
-            await this.roleService.update({ id, updateData })
             return {
                 status: 200,
                 message: "Role created succesfully",

@@ -142,7 +142,7 @@ export class UpdateUserInputType {
   country?: string;
 
   @Field(() => [String])
-  roles?: String[];
+  roles?: string[];
 
   @Field()
   email?: string;

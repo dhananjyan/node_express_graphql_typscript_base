@@ -1,4 +1,4 @@
-import BaseService from "../Common/Service";
+import BaseService from "../Common/BaseService";
 import UserModel, { IUser } from "./User.model";
 import { UpdateUserInputType, UserPaginatedListResponseType, UserType, createUserInputType, paginatedFilterUserInputType } from "./User.type";
 

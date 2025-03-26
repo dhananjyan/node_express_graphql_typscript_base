@@ -1,5 +1,5 @@
 import { Resolver, Query, Mutation, Arg, Authorized } from "type-graphql";
-import { RoleType, RoleInputType, RolePaginatedListResponseType, UpdateRoleInputType } from "./Role.type";
+import { RoleType, RoleInputType, RolePaginatedListResponseType, UpdateRoleInputType, paginatedFilterRoleInputType } from "./Role.type";
 import RoleController from "./Role.controller";
 import { MutationResponseType } from "../../graphql/common.type";
 
@@ -13,8 +13,10 @@ export class RoleResolver {
 
     @Query(() => RolePaginatedListResponseType)
     // @Authorized()
-    async roles(): Promise<RolePaginatedListResponseType> {
-        return await this.roleController.getAllRoles();
+    async roles(
+        @Arg("payload") payload: paginatedFilterRoleInputType,
+    ): Promise<RolePaginatedListResponseType> {
+        return await this.roleController.getAllRoles(payload);
     }
 
     @Mutation(() => MutationResponseType)

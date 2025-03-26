@@ -32,7 +32,7 @@ class BaseService<T extends Document> {
         return await this.model.findByIdAndDelete(id);
     }
 
-    async getPaginated(payload: { filters?: any; skip?: number; limit?: number }): Promise<{ data: T[]; total: number }> {
+    async getPaginated(payload: { filters?: Partial<T>; skip?: number; limit?: number }): Promise<{ data: T[]; total: number }> {
         const { skip = 0, limit = 10, filters = {} } = payload;
 
         const [data, total] = await Promise.all([

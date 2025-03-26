@@ -55,7 +55,7 @@ class UserController {
                 }
             const permissions = new Set();
 
-            const roles = await this.roleService.getByRoleId(user.roles);
+            const roles = await this.roleService.getByIds(user.roles);
             if (roles?.length)
                 roles.map(role => {
                     console.log("role", role)
@@ -91,7 +91,7 @@ class UserController {
         try {
 
             if (payload.roles?.length) { // validate roles
-                let validRoles = await this.roleService.getByRoleId(payload.roles);
+                let validRoles = await this.roleService.getByIds(payload.roles);
                 if (payload.roles?.length !== validRoles?.length)
                     return {
                         status: 400,
@@ -125,7 +125,7 @@ class UserController {
     async update(payload: UpdateUserInputType): Promise<ServiceResponse> {
         try {
             if (payload.roles?.length) { // validate roles
-                let validRoles = await this.roleService.getByRoleId(payload.roles);
+                let validRoles = await this.roleService.getByIds(payload.roles);
                 if (payload.roles?.length !== validRoles?.length)
                     return {
                         status: 400,
@@ -150,7 +150,7 @@ class UserController {
 
     async getUserRoles(payload: UserType): Promise<IRole[] | null> {
         try {
-            const roles = await this.roleService.getByRoleId(payload.roles);
+            const roles = await this.roleService.getByIds(payload.roles);
             return roles;
 
         } catch (error: any) {

@@ -1,6 +1,6 @@
 import { ObjectType, Field, ID, InputType, registerEnumType } from "type-graphql";
 import { MaxLength, Length } from "class-validator";
-import { PaginatedResponseType } from "../../graphql/common.type";
+import { PaginatedInputType, PaginatedResponseType } from "../../graphql/common.type";
 
 export enum Permissions {
     // User
@@ -31,7 +31,7 @@ export class RoleType {
     name!: string;
 
     @Field(_type => [String])
-    permissions!: String[];
+    permissions!: string[];
 }
 
 
@@ -63,6 +63,18 @@ export class RoleInputType {
 
 
 @InputType()
+export class FilterRoleInputType {
+    @Field({ nullable: true })
+    // @MaxLength(30)
+    name!: string;
+
+    @Field(_type => [Permissions], { nullable: true })
+    permissions!: Permissions[];
+}
+
+
+
+@InputType()
 export class UpdateRoleInputType {
     @Field()
     @MaxLength(30)
@@ -75,3 +87,7 @@ export class UpdateRoleInputType {
     @Field(_type => [Permissions])
     permissions?: Permissions[];
 }
+
+@InputType()
+export class paginatedFilterRoleInputType extends PaginatedInputType(FilterRoleInputType) { }
+
