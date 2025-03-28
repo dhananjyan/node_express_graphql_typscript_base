@@ -1,8 +1,9 @@
 import CategoryService from "./Category.service";
 import { ServiceResponse } from "../../graphql/common.type";
 import { CategoryType, CategoryInputType, CategoryPaginatedListResponseType } from "./Category.type";
-import { createJwtToken } from "../../utils/jwt";
-import { Schema } from "mongoose";
+import { FilterQuery } from "mongoose";
+import { ICategory } from "./Category.model";
+import { normalizeFilteredInput } from "../../helper";
 
 class UserController {
 
@@ -11,15 +12,34 @@ class UserController {
         this.categoryService = new CategoryService()
     }
 
-    async getAllCategory(payload: { parentCategory?: Schema.Types.UUID } = {}): Promise<CategoryPaginatedListResponseType> {
-        const category = await this.categoryService.getAll(payload);
-        return {
-            total: 5,
-            hasMore: true,
-            item: category
+    async getAllCategory(payload: FilterQuery<ICategory>): Promise<CategoryPaginatedListResponseType> {
+        try {
+            let { limit, page, ...filters } = payload;
+
+            const skip = (page - 1) * limit;
+
+            let normalizedFilters = normalizeFilteredInput(filters);
+
+            const category = await this.categoryService.getPaginated({
+                filters: normalizedFilters,
+                limit,
+                skip
+            });
+
+            return {
+                item: category.data,
+                total: category.total,
+                hasMore: false,
+
+            }
+        } catch (error) {
+            console.error(error)
+            return {
+                item: []
+            }
         }
     }
-    async getAllChildCateogry(payload: { parentCategory?: Schema.Types.UUID } = {}): Promise<CategoryType[]> {
+    async getAllChildCateogry(payload: FilterQuery<ICategory>): Promise<CategoryType[]> {
         return this.categoryService.getAll(payload);
     }
 

@@ -1,4 +1,4 @@
-import { ObjectType, Field, ID, InputType, FieldResolver, Root, createUnionType } from "type-graphql";
+import { ObjectType, Field, ID, InputType } from "type-graphql";
 import { PaginatedResponseType } from "../../graphql/common.type";
 
 
@@ -9,7 +9,7 @@ import { PaginatedResponseType } from "../../graphql/common.type";
 @ObjectType()
 export class CategoryType {
   @Field(() => ID)
-  _id!: string;
+  _id?: string;
 
   @Field()
   name!: string;
@@ -20,14 +20,11 @@ export class CategoryType {
   @Field()
   image?: string;
 
-  @Field(_type => ID)
-  parentCategory?: string;
+  @Field(() => Date)
+  createdAt!: Date;
 
   @Field(() => Date)
-  createdAt?: string;
-
-  @Field(() => Date)
-  updatedAt?: string;
+  updatedAt?: Date;
 
   @Field(() => [CategoryType])
   childCategory?: CategoryType[];
@@ -57,7 +54,7 @@ export class CategoryInputType {
   @Field()
   slug!: string;
 
-  @Field()
+  @Field({ nullable: true })
   image?: string;
 
   @Field(_type => ID, { nullable: true })

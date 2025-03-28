@@ -4,6 +4,7 @@ import connectDb from "./utils/connectDb";
 import apolloServer from "./utils/apolloServer";
 import compression from 'compression';
 import { authenticate } from "./utils/jwt";
+import cors from "cors";
 
 async function server() {
 
@@ -20,6 +21,8 @@ async function server() {
   //   console.log(req?.originalUrl);
   //   next();
   // });
+
+  app.use(cors())
 
   await connectDb(); // Connect DB
 

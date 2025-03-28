@@ -20,7 +20,16 @@ const apolloServer = async (app: express.Application) => {
         emitSchemaFile: path.resolve(__dirname, "../graphql/schema.graphql"),
     });
 
-    const server = new ApolloServer<Context>({ schema });
+    const server = new ApolloServer<Context>({
+        schema,
+        formatError: (err: any) => {
+            return {
+                message: err.message,
+                code: err.extensions?.code || "INTERNAL_SERVER_ERROR",
+                // details: err.extensions?.stacktrace || null,
+            };
+        },
+    });
 
     await server.start();  // Start the server
 

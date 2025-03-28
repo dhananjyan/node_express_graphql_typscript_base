@@ -30,7 +30,7 @@ export class CategoryResolver {
   // @Authorized()
   @Query(_type => CategoryPaginatedListResponseType)
   async category(): Promise<CategoryPaginatedListResponseType> {
-    const result = await this.categoryController.getAllCategory();
+    const result = await this.categoryController.getAllCategory({});
     return result;
   }
 

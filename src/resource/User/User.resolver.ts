@@ -5,11 +5,15 @@ import { MutationResponseType } from "../../graphql/common.type";
 import { Permissions } from "../Role/Role.type";
 import { IUser } from "./User.model";
 import { IRole } from "../Role/Role.model";
+import { GraphQLError } from "graphql";
+import Error from "../../graphql/Error";
+import BaseResolver from "../Common/BaseResolver";
 
 @Resolver(UserType)
-export class UserResolver {
+export class UserResolver extends BaseResolver {
   userController: UserController
   constructor() {
+    super()
     this.userController = new UserController()
   }
 
@@ -22,7 +26,6 @@ export class UserResolver {
     return this.userController.getUserRoles(user.toObject())
   }
 
-
   // *************************************
   // Query
   // *************************************
@@ -31,8 +34,12 @@ export class UserResolver {
   async users(
     @Arg("payload") payload: paginatedFilterUserInputType
   ): Promise<UserPaginatedListResponseType> {
-    const result = await this.userController.getAllUsers(payload);
-    return result;
+    try {
+      const result = await this.userController.getAllUsers(payload);
+      return this.response(result);
+    } catch (error: any) {
+      return this.errorResponse(error)
+    }
   }
 
 
@@ -44,20 +51,35 @@ export class UserResolver {
   async createUser(
     @Arg("payload") payload: createUserInputType
   ): Promise<MutationResponseType> {
-    return this.userController.createUser(payload);
+    try {
+      const result = await this.userController.createUser(payload);
+      return this.response(result)
+    } catch (error: any) {
+      return this.errorResponse(error)
+    }
   }
 
   @Mutation(() => MutationResponseType)
   async updateUser(
     @Arg("payload") payload: UpdateUserInputType
   ): Promise<MutationResponseType> {
-    return this.userController.update(payload);
+    try {
+      const result = await this.userController.update(payload);
+      return this.response(result)
+    } catch (error: any) {
+      return this.errorResponse(error)
+    }
   }
 
   @Mutation(() => LoginResponseType)
   async userLogin(
     @Arg("payload") payload: LoginInputType
   ): Promise<LoginResponseType> {
-    return this.userController.login(payload);
+    try {
+      const result = await this.userController.login(payload);
+      return this.response(result)
+    } catch (error: any) {
+      return this.errorResponse(error)
+    }
   }
 }

@@ -7,8 +7,8 @@ class BaseService<T extends Document> {
         this.model = model;
     }
 
-    async getAll(): Promise<T[]> {
-        return await this.model.find();
+    async getAll(condition: FilterQuery<T>): Promise<T[]> {
+        return await this.model.find(condition);
     }
 
     async getOne(condition: FilterQuery<T>): Promise<T | null> {

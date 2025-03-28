@@ -10,26 +10,6 @@ class UserService extends BaseService<IUser> {
     async findByEmail(email: string): Promise<UserType | null> {
         return this.model.findOne({ email });
     }
-    // async getAll(): Promise<UserType[]> {
-    //     return UserModel.find();
-    // }
-
-    // async getOne({ email }: { email?: string }): Promise<IUser | null> {
-    //     return UserModel.findOne({
-    //         email
-    //     })
-    // }
-
-    // async create(payload: createUserInputType): Promise<IUser> {
-    //     const user = new UserModel(payload);
-    //     return user.save();
-    // }
-
-    // async update(payload: UpdateUserInputType): Promise<any> {
-    //     return UserModel.updateOne({ _id: payload.id }, { $set: payload });
-    // }
-
-
 
 }
 

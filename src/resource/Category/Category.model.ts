@@ -1,10 +1,11 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface ICategory extends Document {
+  _id: string;
   name: string;
   slug: string;
-  parentCategory?: string | null;
-  image?: string;
+  parentCategory: string | null;
+  image: string;
   createdAt: Date;
   updatedAt: Date;
 }

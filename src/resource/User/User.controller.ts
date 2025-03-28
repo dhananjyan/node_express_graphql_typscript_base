@@ -15,6 +15,11 @@ class UserController {
         this.roleService = new RoleService()
     }
 
+
+    // *************************************
+    // Query Controller
+    // *************************************
+
     async getAllUsers(payload: paginatedFilterUserInputType): Promise<UserPaginatedListResponseType> {
 
         let { limit, page, ...filters } = payload;
@@ -28,7 +33,6 @@ class UserController {
             limit: 5,
             skip
         });
-        console.log("users", users)
         return {
             item: users.data,
             total: users.total,
@@ -36,13 +40,18 @@ class UserController {
         }
     }
 
+
+    // *************************************
+    // Mutation Controller
+    // *************************************
+
     async login(payload: LoginInputType): Promise<LoginResponseType> {
         try {
             let user = await this.userService.getOne({ email: payload.username });
 
             if (!user) // User not found
                 return {
-                    status: 500,
+                    status: 400,
                     message: "Please try with correct username and password"
                 }
 
@@ -50,7 +59,7 @@ class UserController {
             user = user.toObject();
             if (!isPasswordMatch)
                 return {
-                    status: 500,
+                    status: 400,
                     message: "Please try with correct username and password"
                 }
             const permissions = new Set();
@@ -58,7 +67,6 @@ class UserController {
             const roles = await this.roleService.getByIds(user.roles);
             if (roles?.length)
                 roles.map(role => {
-                    console.log("role", role)
                     let data = role.toObject()
                     data.permissions.map((item: String) => permissions.add(item))
                 })
@@ -79,6 +87,7 @@ class UserController {
             }
 
         } catch (error) {
+            throw error
             console.error(error)
             return {
                 status: 500,
@@ -148,11 +157,15 @@ class UserController {
         }
     }
 
+
+    // *************************************
+    // Resolver Controller
+    // *************************************
+
     async getUserRoles(payload: UserType): Promise<IRole[] | null> {
         try {
             const roles = await this.roleService.getByIds(payload.roles);
             return roles;
-
         } catch (error: any) {
             console.error(error)
             return []

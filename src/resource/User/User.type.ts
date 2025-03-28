@@ -43,7 +43,6 @@ export class TokenDataType extends UserType {
   permissions!: Permissions[];
 }
 
-
 // *************************************
 // Response Type
 // *************************************
@@ -62,16 +61,9 @@ export class Login extends UserType {
 export class UserPaginatedListResponseType extends PaginatedResponseType(UserType) {
 }
 
-
 @ObjectType()
 export class LoginResponseType extends MutationResponseDataType(Login) {
 }
-
-// const SearchResultUnion = createUnionType({
-//   name: "SearchResult", // Name of the GraphQL union
-//   types: () => [UserPaginatedList, ErrorResponse()] as const, // function that returns tuple of object types classes
-// });
-
 
 
 // *************************************
@@ -150,7 +142,6 @@ export class UpdateUserInputType {
   // @Field()
   // password?: string;
 }
-
 
 
 @InputType()

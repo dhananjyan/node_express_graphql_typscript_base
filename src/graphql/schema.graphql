@@ -4,7 +4,7 @@
 # -----------------------------------------------
 
 input CategoryInputType {
-  image: String!
+  image: String
   name: String!
   parentCategory: ID
   slug: String!
@@ -22,7 +22,6 @@ type CategoryType {
   createdAt: DateTimeISO!
   image: String!
   name: String!
-  parentCategory: ID!
   slug: String!
   updatedAt: DateTimeISO!
 }
