@@ -1,26 +1,24 @@
-import UserService from "./User.service";
+import CustomerService from "./Customer.service";
 import { ServiceResponse } from "../../graphql/common.type";
-import { LoginInputType, LoginResponseType, UpdateUserInputType, UserType, createUserInputType, UserPaginatedListResponseType, paginatedFilterUserInputType } from "./User.type";
+import { CustomerLoginInputType, CustomerLoginResponseType, UpdateCustomerInputType, createCustomerInputType, CustomerPaginatedListResponseType, paginatedFilterCustomerInputType } from "./Customer.type";
 import { createJwtToken } from "../../utils/jwt";
 import RoleService from "../Role/Role.service";
-import { IRole } from "../Role/Role.model";
 import { normalizeFilteredInput } from "../../helper";
 
-class UserController {
+class CustomerController {
 
-    userService: UserService
+    customerService: CustomerService
     roleService: RoleService
     constructor() {
-        this.userService = new UserService()
+        this.customerService = new CustomerService()
         this.roleService = new RoleService()
     }
-
 
     // *************************************
     // Query Controller
     // *************************************
 
-    async getAllUsers(payload: paginatedFilterUserInputType): Promise<UserPaginatedListResponseType> {
+    async getAllCustomers(payload: paginatedFilterCustomerInputType): Promise<CustomerPaginatedListResponseType> {
 
         let { limit, page, ...filters } = payload;
 
@@ -28,7 +26,7 @@ class UserController {
 
         let normalizedFilters = normalizeFilteredInput(filters);
 
-        const users = await this.userService.getPaginated({
+        const users = await this.customerService.getPaginated({
             filters: normalizedFilters,
             limit: 5,
             skip
@@ -45,9 +43,9 @@ class UserController {
     // Mutation Controller
     // *************************************
 
-    async login(payload: LoginInputType): Promise<LoginResponseType> {
+    async login(payload: CustomerLoginInputType): Promise<CustomerLoginResponseType> {
         try {
-            let user = await this.userService.getOne({ email: payload.username });
+            let user = await this.customerService.getOne({ email: payload.username });
 
             if (!user) // User not found
                 return {
@@ -62,21 +60,12 @@ class UserController {
                     status: 400,
                     message: "Please try with correct username and password"
                 }
-            const permissions = new Set();
-
-            const roles = await this.roleService.getByIds(user.roles);
-            if (roles?.length)
-                roles.map(role => {
-                    let data = role.toObject()
-                    data.permissions.map((item: String) => permissions.add(item))
-                })
 
             let tokenData = {
                 email: user.email,
                 firstName: user.firstName,
                 lastName: user.lastName,
-                permissions: [...permissions],
-                type: ["ADMIN"]
+                type: ["BUYERS"]
             }
 
             let token = createJwtToken(tokenData);
@@ -98,26 +87,17 @@ class UserController {
         }
     }
 
-    async createUser(payload: createUserInputType): Promise<ServiceResponse> {
+    async create(payload: createCustomerInputType): Promise<ServiceResponse> {
         try {
 
-            if (payload.roles?.length) { // validate roles
-                let validRoles = await this.roleService.getByIds(payload.roles);
-                if (payload.roles?.length !== validRoles?.length)
-                    return {
-                        status: 400,
-                        message: "Role not exist"
-                    }
-            }
-
-            let isEmailExist = await this.userService.getOne({ email: payload.email });
+            let isEmailExist = await this.customerService.getOne({ email: payload.email });
             if (isEmailExist)
                 return {
                     status: 400,
                     message: "Email already exist"
                 }
 
-            await this.userService.create(payload);
+            await this.customerService.create(payload);
 
             return {
                 status: 200,
@@ -133,19 +113,11 @@ class UserController {
         }
     }
 
-    async update(payload: UpdateUserInputType): Promise<ServiceResponse> {
+    async update(payload: UpdateCustomerInputType): Promise<ServiceResponse> {
         try {
-            if (payload.roles?.length) { // validate roles
-                let validRoles = await this.roleService.getByIds(payload.roles);
-                if (payload.roles?.length !== validRoles?.length)
-                    return {
-                        status: 400,
-                        message: "Role not exist"
-                    }
-            }
 
             const { id, ...updateData } = payload;
-            await this.userService.update(id, updateData);
+            await this.customerService.update(id, updateData);
             return {
                 status: 200,
                 message: "User updated succesfully",
@@ -159,21 +131,20 @@ class UserController {
         }
     }
 
-
     // *************************************
     // Resolver Controller
     // *************************************
 
-    async getUserRoles(payload: UserType): Promise<IRole[] | null> {
-        try {
-            const roles = await this.roleService.getByIds(payload.roles);
-            return roles;
-        } catch (error: any) {
-            console.error(error)
-            return []
-        }
-    }
+    // async getUserRoles(payload: CustomerType): Promise<IRole[] | null> {
+    //     try {
+    //         const roles = await this.roleService.getByIds(payload.roles);
+    //         return roles;
+    //     } catch (error: any) {
+    //         console.error(error)
+    //         return []
+    //     }
+    // }
 
 }
 
-export default UserController;
+export default CustomerController;

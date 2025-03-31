@@ -2,12 +2,14 @@ import { Resolver, Query, Mutation, Arg, Authorized } from "type-graphql";
 import { RoleType, RoleInputType, RolePaginatedListResponseType, UpdateRoleInputType, paginatedFilterRoleInputType } from "./Role.type";
 import RoleController from "./Role.controller";
 import { MutationResponseType } from "../../graphql/common.type";
+import BaseResolver from "../Common/BaseResolver";
 
 @Resolver(RoleType)
-export class RoleResolver {
+export class RoleResolver extends BaseResolver {
 
     roleController: RoleController
     constructor() {
+        super()
         this.roleController = new RoleController()
     }
 
@@ -16,20 +18,35 @@ export class RoleResolver {
     async roles(
         @Arg("payload") payload: paginatedFilterRoleInputType,
     ): Promise<RolePaginatedListResponseType> {
-        return await this.roleController.getAllRoles(payload);
+        try {
+            const result = await this.roleController.getAllRoles(payload);
+            return this.response(result);
+        } catch (error: any) {
+            return this.errorResponse(error)
+        }
     }
 
     @Mutation(() => MutationResponseType)
     async createRole(
         @Arg("payload") payload: RoleInputType,
     ): Promise<MutationResponseType> {
-        return this.roleController.createRole(payload)
+        try {
+            const result = await this.roleController.createRole(payload)
+            return this.response(result);
+        } catch (error: any) {
+            return this.errorResponse(error)
+        }
     }
 
     @Mutation(() => MutationResponseType)
     async updateRole(
         @Arg("payload") payload: UpdateRoleInputType,
     ): Promise<MutationResponseType> {
-        return this.roleController.update(payload)
+        try {
+            const result = await this.roleController.update(payload)
+            return this.response(result);
+        } catch (error: any) {
+            return this.errorResponse(error)
+        }
     }
 }

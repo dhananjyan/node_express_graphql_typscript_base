@@ -26,6 +26,51 @@ type CategoryType {
   updatedAt: DateTimeISO!
 }
 
+type CustomerLogin {
+  _id: ID!
+  countryId: ID!
+  createdAt: DateTimeISO!
+  email: String!
+  firstName: String!
+  lastName: String!
+  password: String!
+  permissions: [String!]!
+  phoneNumber: String!
+  token: String!
+  updatedAt: DateTimeISO!
+  userType: [UserTypeEnum!]!
+}
+
+input CustomerLoginInputType {
+  password: String!
+  username: String!
+}
+
+type CustomerLoginResponseType {
+  data: CustomerLogin
+  message: String!
+  status: Int!
+}
+
+type CustomerPaginatedListResponseType {
+  hasMore: Boolean!
+  item: [CustomerType!]!
+  total: Float!
+}
+
+type CustomerType {
+  _id: ID!
+  countryId: ID!
+  createdAt: DateTimeISO!
+  email: String!
+  firstName: String!
+  lastName: String!
+  password: String!
+  phoneNumber: String!
+  updatedAt: DateTimeISO!
+  userType: [UserTypeEnum!]!
+}
+
 """
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.This scalar is serialized to a string in ISO 8601 format and parsed from a string in ISO 8601 format.
 """
@@ -58,8 +103,12 @@ type LoginResponseType {
 
 type Mutation {
   createCategory(payload: CategoryInputType!): MutationResponseType!
+  createCustomer(payload: createCustomerInputType!): MutationResponseType!
   createRole(payload: RoleInputType!): MutationResponseType!
   createUser(payload: createUserInputType!): MutationResponseType!
+  cretateProduct(payload: ProductInputType!): MutationResponseType!
+  customerLogin(payload: CustomerLoginInputType!): CustomerLoginResponseType!
+  updateCustomer(payload: UpdateCustomerInputType!): MutationResponseType!
   updateRole(payload: UpdateRoleInputType!): MutationResponseType!
   updateUser(payload: UpdateUserInputType!): MutationResponseType!
   userLogin(payload: LoginInputType!): LoginResponseType!
@@ -82,8 +131,43 @@ enum Permissions {
   USER_UPDATE
 }
 
+input ProductInputType {
+  category: ID!
+  description: String!
+  discount: Float
+  images: [String!]!
+  merchant: ID!
+  price: Float!
+  rating: Float
+  stock: Int!
+  title: String!
+}
+
+type ProductPaginatedListResponseType {
+  hasMore: Boolean!
+  item: [ProductType!]!
+  total: Float!
+}
+
+type ProductType {
+  _id: ID!
+  category: String!
+  createdAt: DateTimeISO!
+  description: String!
+  discount: Float
+  images: [String!]!
+  merchant: ID!
+  price: Float!
+  rating: Float
+  stock: Int!
+  title: String!
+  updatedAt: DateTimeISO!
+}
+
 type Query {
   category: CategoryPaginatedListResponseType!
+  customers(payload: paginatedFilterCustomerInputType!): CustomerPaginatedListResponseType!
+  products: ProductPaginatedListResponseType!
   roles(payload: paginatedFilterRoleInputType!): RolePaginatedListResponseType!
   users(payload: paginatedFilterUserInputType!): UserPaginatedListResponseType!
 }
@@ -103,6 +187,16 @@ type RoleType {
   _id: ID!
   name: String!
   permissions: [String!]!
+}
+
+input UpdateCustomerInputType {
+  countryId: String!
+  email: String!
+  firstName: String!
+  id: ID!
+  lastName: String!
+  mobileNumber: String!
+  userType: [UserTypeEnum!]!
 }
 
 input UpdateRoleInputType {
@@ -139,6 +233,23 @@ type UserType {
   userRoles: [RoleType!]!
 }
 
+"""Types of users in the system"""
+enum UserTypeEnum {
+  BUYER
+  DRIVER
+  MERCHANT
+}
+
+input createCustomerInputType {
+  countryId: ID!
+  email: String!
+  firstName: String!
+  lastName: String!
+  password: String!
+  phoneNumber: String!
+  userType: [UserTypeEnum!]!
+}
+
 input createUserInputType {
   country: String!
   email: String!
@@ -147,6 +258,17 @@ input createUserInputType {
   mobileNumber: String!
   password: String!
   roles: [String!]!
+}
+
+input paginatedFilterCustomerInputType {
+  country: String
+  email: String
+  firstName: String
+  lastName: String
+  limit: Int! = 10
+  mobileNumber: String
+  page: Int! = 1
+  roles: [String!]
 }
 
 input paginatedFilterRoleInputType {
